@@ -1,0 +1,238 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+
+@inject SignInManager<Employee> SignInManager
+@inject UserManager<Employee> UserManager
+@inject Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper HtmlHelper
+@{
+    string currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    string currentPage = ViewContext.RouteData.Values["page"]?.ToString();
+    string currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+
+<head>
+     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="csrf-token" content="@Antiforgery.GetAndStoreTokens(HttpContextAccessor.HttpContext).RequestToken" />
+
+
+    <meta name="keywords"
+        content="leave management, .net 7, .net core, complete asp.net and entity framework development">
+    <meta name="description"
+        content="Educational Project for .NET 7 Development">
+    <meta name="robots" content="noindex,nofollow">
+    <title>@ViewData["Title"] - Staff Leave Portal</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/all.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/fontawesome.css" asp-append-version="true" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LeaveManagement.Web.styles.css" asp-append-version="true" />
+    
+    <link rel="canonical" href="https://www.wrappixel.com/templates/xtreme-admin-lite/" />
+
+    <link href="~/css/style.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div class="preloader">
+        <div class="lds-ripple">
+            <div class="lds-pos"></div>
+            <div class="lds-pos"></div>
+        </div>
+    </div>
+
+    <div id="main-wrapper" data-layout="vertical" data-navbarbg="skin5" data-sidebartype="full"
+        data-sidebar-position="absolute" data-header-position="absolute" data-boxed-layout="full" >
+
+        <header class="topbar  " style="background-color: rgb(255, 255, 255);" data-navbarbg="skin5">
+            <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background-color: rgb(255, 255, 255);">
+                <div class="container-fluid d-flex justify-content-between">
+                    <div class="navbar-brand me-auto d-flex align-items-center">
+                        <span style="color:#0d6efd;">
+                            <i class="fa fa-suitcase fa-2x mx-3" aria-hidden="true"></i>
+                        </span>
+                        <span class="logo-text fw-bolder fa-1x text-dark">
+                            Staff Leave Portal
+                        </span>
+                    </div>
+                   
+                    <div class="d-flex">
+                        @if (!SignInManager.IsSignedIn(User))
+                        {
+                            <a class="nav-link @(currentPage == "/Account/Register" ? "active" : "") fw-bold me-2"
+                           asp-area="Identity" asp-page="/Account/Register">
+                                <span class="text-black">  <i class="fa fa-user-plus pe-2" aria-hidden="true"></i></span><span class="text-black">Register</span>
+                            </a>
+                            <a class="nav-link @(currentPage == "/Account/Login" ? "active" : "") fw-bold"
+                           asp-area="Identity" asp-page="/Account/Login">
+                 
+                                <span class="text-black">  <i class="fa fa-user pe-1" aria-hidden="true"></i></span><span class="text-black">Login</span>
+
+                            </a>
+                        }
+                          <div class="dropdown mb-3 me-2">
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                                <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="~/images/users/1.jpg" alt="users" width="32" height="32" class="rounded-circle me-2">
+                                    <strong>@User.Identity?.Name</strong>
+                                </a>
+                                <ul class="dropdown-menu text-small shadow">
+                                    <li><span class="dropdown-item">@User.FindFirstValue(ClaimTypes.Role)</span></li>
+                                    <li>
+                                        <a href="javascript:void(0);" class="dropdown-item" onclick="logoutUser()">Sign out</a>
+                                    </li>
+                                </ul>
+                            }
+                           
+                        </div>
+                    </div>
+
+                  
+                  
+                </div>
+            </nav>
+
+        </header>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-sm-4 col-12  p-2">
+                    <div class="d-flex flex-column flex-shrink-0 p-3  rounded-2 shadow vh-100 bg-light" >
+                        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+                            <span class="fs-4 fw-bold">Quick Links</span>
+                        </a>
+                        <hr>
+
+                        <!-- User Profile Section -->
+                       
+
+                        <ul class="nav nav-pills flex-column mb-auto">
+                            
+                            <li class="navbar-brand my-2">
+                                <a class="nav-link @(currentAction == "Index" && currentController == "Home" ? "active" : "") fw-bold" asp-controller="Home" asp-action="Index">
+                                    <i class="fas fa-home me-2"></i> Home
+                                </a>
+                            </li>
+                        
+
+
+
+
+                            @if (User.IsInRole(Roles.User))
+                            {
+                                <li class="navbar-brand my-2">
+                                    <a class="nav-link @(currentAction == "Create" && currentController == "LeaveRequests" ? "active" : "")  fw-bold" asp-controller="LeaveRequests" asp-action="Create">
+                                        <i class="fas fa-pen-alt me-2"></i> Apply For Leave
+                                    </a>
+                                </li>
+                                <li class="navbar-brand my-2">
+                                    <a class="nav-link @(currentAction == "MyLeave" && currentController == "LeaveRequests" ? "active" : "")  fw-bold" asp-controller="LeaveRequests" asp-action="MyLeave">
+                                        <i class="far fa-file-alt me-2"></i> My Leave
+                                    </a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole(Roles.Administrator))
+                            {
+                                <li class="navbar-brand my-2">
+                                    <a class="nav-link @(currentAction == "Index" && currentController == "Employees" ? "active" : "")  fw-bold" asp-controller="Employees" asp-action="Index">
+                                        <i class="fas fa-users me-2"></i> Employees
+                                    </a>
+                                </li>
+                                <li class="navbar-brand my-2">
+                                    <a class="nav-link @(currentAction == "Index" && currentController == "LeaveTypes" ? "active" : "")  fw-bold" asp-controller="LeaveTypes" asp-action="Index">
+                                        <i class="fas fa-cogs me-2"></i> Leave Types
+                                    </a>
+                                </li>
+                                <li class="navbar-brand my-2">
+                                    <a class="nav-link @(currentAction == "Index" && currentController == "LeaveRequests" ? "active" : "")  fw-bold" asp-controller="LeaveRequests" asp-action="Index">
+                                        <i class="fas fa-tasks me-2"></i> Leave Requests
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+
+                </div>
+                <div class="col-lg-9 col-sm-8 col-12 pt-3">
+                 
+                       
+                                @RenderBody()
+                        
+                        <footer class="footer text-center">
+                        &copy; @DateTime.Now.Year - Staff Leave Portal | by <a href="https://github.com/bishoyadel1/">Bishoy Adel</a>
+                        </footer>
+                  
+                </div>
+
+            </div>
+        </div>
+
+        
+       
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/sweetalert/sweetalert.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+
+    
+    <!--Wave Effects -->
+    <script src="~/dist/js/waves.js"></script>
+    <script src="~/js/waves.js"></script>
+    <!--Menu sidebar -->
+    <script src="~/js/sidebarmenu.js"></script>
+    <!--Custom JavaScript -->
+    <script src="~/js/custom.js"></script>
+    <!--This page JavaScript -->
+    <!--chartis chart-->
+    @*<script src="~/js/pages/dashboards/dashboard1.js"></script>*@
+
+    <script>
+        function logoutUser() {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            fetch('@Url.Page("/Account/Logout", new { area = "Identity", returnUrl = Url.Action("Index", "Home") })', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'RequestVerificationToken': csrfToken // Use the token here
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload(); // or update the UI as needed
+                    } else {
+                        console.error('Logout failed:', response.statusText);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        $(function(){
+            $('.table').DataTable();
+            $(".datepicker").datepicker({
+                dateFormat: "yy-mm-dd"
+            });
+        });
+    </script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+
+</html>

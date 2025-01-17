@@ -13,15 +13,24 @@ This project is a dynamic staff leave portal that features both employee and adm
 
 ## Features
 
--	Create your own Leave Type as admin
+-	Create your own Leave Type as admin![12](https://github.com/user-attachments/assets/7cba28a6-dc1b-4586-964d-0a8b2d8a5112)
+
+-	![21](https://github.com/user-attachments/assets/04af7229-13fd-49c9-be99-3fd0a1124cc3)
 -	Add the number of days specific to a leave
 -	Allocate Leave to Employees
--	User Authentication
+-	![26](https://github.com/user-attachments/assets/23aa9a12-e6b0-4de0-8f05-0e730a11eb71)
 -	Apply for Leave
--	Leave request approval workflow.
+-	![25](https://github.com/user-attachments/assets/7564de17-526c-49cc-abdf-f45593ddded1)
 -	Employee List View
--	Allocation Leave View
--   Request List View
+![18](https://github.com/user-attachments/assets/cdfe5845-a477-4998-ac2d-b844092b79f5) 
+- Request List View
+- ![26](https://github.com/user-attachments/assets/84711933-9e2c-4754-8498-f88d2e54da1d)
+
+- 	User Authentication!
+- 	[16](https://github.com/user-attachments/assets/98b98819-bf57-4fd2-8eab-0528b4cf355f)
+- 	![15](https://github.com/user-attachments/assets/4f53e985-7c34-4058-ae9f-17ea5c5bf895)
+
+
 
 ## Technology Stack
 
